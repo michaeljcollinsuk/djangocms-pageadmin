@@ -29,9 +29,8 @@ from djangocms_versioning.models import Version
 
 from .filters import LanguageFilter, TemplateFilter, UnpublishedFilter
 from .forms import DuplicateForm
-from .helpers import proxy_model
-
-
+from .helpers import proxy_model, _get_url
+from .conf import PAGEADMIN_LIVE_URL_QUERY_PARAM_NAME
 try:
     from django.utils.html import force_str
 except ImportError:
@@ -165,9 +164,14 @@ class PageContentAdmin(VersioningAdminMixin, DefaultPageContentAdmin):
         ]
 
     def _get_preview_link(self, obj, request, disabled=False):
+        preview_url = get_object_preview_url(obj)
+        live_url = _get_url(obj)
+        if live_url:
+            preview_url = f"{preview_url}?{live_url}"
+
         return render_to_string(
             "djangocms_pageadmin/admin/icons/preview.html",
-            {"url": get_object_preview_url(obj), "disabled": disabled, "keepsideframe": False},
+            {"url": preview_url, "disabled": disabled, "keepsideframe": False},
         )
 
     def _get_edit_link(self, obj, request, disabled=False):
