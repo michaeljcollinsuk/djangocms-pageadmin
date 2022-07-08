@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import get_language as force_language
+from django.utils.translation import get_language, override as force_language
 from django.utils.translation import ugettext_lazy as _
 
 from cms.toolbar.items import ButtonList
@@ -57,7 +57,7 @@ def new_get_object_preview_url(func):
         live_url = _get_url(obj)
 
         if not language:
-            language = force_language()
+            language = get_language()
 
         with force_language(language):
             url = admin_reverse('cms_placeholder_render_object_preview', args=[content_type.pk, obj.pk])
@@ -74,7 +74,7 @@ def new_get_object_edit_url(obj, language=None):
     live_url = _get_url(obj)
 
     if not language:
-        language = force_language()
+        language = get_language()
 
     with force_language(language):
         url = admin_reverse('cms_placeholder_render_object_edit', args=[content_type.pk, obj.pk])
